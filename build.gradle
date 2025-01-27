@@ -1,0 +1,114 @@
+plugins {
+    id 'application'
+
+    id "com.github.davidmc24.gradle.plugin.avro" version '1.9.1'
+
+    id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+    id 'org.jmailen.kotlinter' version '3.2.0'
+    id 'com.github.johnrengelman.shadow' version '8.0.0'
+}
+
+group 'no.nav.sf.stilling'
+version '0.1'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'no.nav.kafka.dialog.BootstrapKt'
+    }
+}
+
+shadowJar {
+    archiveBaseName = 'app'
+    archiveClassifier = ''
+}
+
+application {
+    mainClassName = 'no.nav.kafka.dialog.BootstrapKt'
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs = ['-Xms1024m', '-Xmx2048m']
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url "https://packages.confluent.io/maven"
+    }
+
+    ["maven-release"].each { repo ->
+        String token = System.getenv("GITHUB_TOKEN") ?: project.findProperty("githubPassword")
+        if (!token) throw new NullPointerException("Missing token, you have to set GITHUB_TOKEN or githubPassword")
+        maven {
+            url = uri("https://maven.pkg.github.com/navikt/$repo")
+            credentials {
+                username = 'x-access-token'
+                password = token
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation platform('org.jetbrains.kotlin:kotlin-bom') //needed?
+
+    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+
+    implementation 'org.json:json:20231013'
+
+    implementation 'com.google.code.gson:gson:2.10'
+
+    implementation("no.nav.syfo.dialogmote.avro:isdialogmote-schema:1.0.5")
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5"
+
+    implementation "org.http4k:http4k-client-apache:3.251.0"
+    implementation "org.http4k:http4k-server-apache:3.251.0"
+
+    implementation "org.apache.kafka:kafka-clients:7.5.1-ce"
+    implementation "io.confluent:kafka-avro-serializer:7.5.1"
+
+    implementation "io.github.microutils:kotlin-logging:1.7.9"
+    implementation "ch.qos.logback:logback-classic:1.4.14"
+    implementation "net.logstash.logback:logstash-logback-encoder:7.4"
+
+    implementation "io.prometheus:simpleclient_common:0.8.1"
+    implementation "io.prometheus:simpleclient_hotspot:0.8.1"
+
+    implementation "net.minidev:json-smart:2.4.9" //Desired transient json-smart to token-validation above
+    implementation "org.apache.commons:commons-compress:1.26.0" //transient http4k-apache
+    implementation "org.apache.httpcomponents:httpclient:4.5.13" //Desired transient httpclient to http4k-apache
+    implementation "org.xerial.snappy:snappy-java:1.1.10.4" //Desired transient snappy to kafka-clients above
+    implementation "org.apache.avro:avro:1.11.4" //Desired transient avro to serializer above
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'io.mockk:mockk:1.13.8'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+    test.kotlin.srcDirs += 'src/test/kotlin'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    dependsOn("generateAvroJava")
+    dependsOn("mergeYamlTask")
+    dependsOn("updateDispatchWorkflow")
+    kotlinOptions.jvmTarget = "17"
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}
+
+apply from: 'mergeYamlTask.gradle'
+apply from: 'updateDispatchWorkflow.gradle'
