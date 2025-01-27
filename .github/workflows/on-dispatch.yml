@@ -7,7 +7,7 @@ on:
         description: 'Deployment Application'
         required: true
         type: choice
-        default: 'sf-dialogmote'
+        default: 'sf-vedtak'
         options:
           - 'sf-vedtak'
           - 'ALL'
@@ -19,8 +19,6 @@ on:
         options:
           - 'dev-gcp'
           - 'prod-gcp'
-          - 'dev-fss'
-          - 'prod-fss'
       FLAG_SEEK:
         description: "Seek"
         required: true

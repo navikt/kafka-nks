@@ -20,7 +20,7 @@ on:
         description: 'Deployment Application'
         required: true
         type: choice
-        default: 'sf-dialogmote'
+        default: 'sf-vedtak'
         options:"""
 
         // Check if the file starts with the desired structure
