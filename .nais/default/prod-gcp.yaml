@@ -34,7 +34,7 @@ spec:
         - host: login.salesforce.com
         - host: navdialog.my.salesforce.com
   envFrom:
-    - secret: kafka-integrasjon-po-arbeidsgiver
+    - secret: not-setup
   kafka:
     pool: nav-prod # enum of nav-dev, nav-prod
   env:
