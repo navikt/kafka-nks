@@ -9,7 +9,8 @@ on:
         type: choice
         default: 'sf-vedtak'
         options:
-          - 'sf-vedtak'
+          - 'sf-sykepenger-utbetaling'
+          - 'sf-sykepenger-vedtak'
           - 'ALL'
       DEPLOY_CLUSTER:
         description: 'Deployment Cluster'
