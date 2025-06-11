@@ -38,3 +38,10 @@ val filterOnActivityCodes: Filter = { record ->
         throw (RuntimeException("Exception at filter on activity codes, partition ${record.partition()} offset ${record.offset()}, message " + e.message))
     }
 }
+
+val passThroughLimit = 1
+var passThrough = 0
+
+val limitFilter: Filter = { record ->
+    (passThrough++ < passThroughLimit)
+}
