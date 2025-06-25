@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: temurin
       - name: Build and run tests
         env:
@@ -57,11 +57,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: temurin
       - name: Setup Gradle to generate and submit dependency graphs
         uses: gradle/actions/setup-gradle@v3
         with:
+          cache-disabled: true
           dependency-graph: generate-and-submit
       - name: Build JAR
         env:
@@ -72,8 +73,6 @@ jobs:
         id: docker-push
         with:
           team: teamnks
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
       - name: Create image URL artifact
         run: echo "${{ steps.docker-push.outputs.image }}" > ./imageUrl.txt
       - uses: actions/upload-artifact@v4
