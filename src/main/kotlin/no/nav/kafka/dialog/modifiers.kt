@@ -5,7 +5,7 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import mu.KotlinLogging
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.http4k.client.ApacheClient
+import org.http4k.client.OkHttp
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
@@ -57,7 +57,7 @@ val replaceNumbersWithInstants: Modifier = { record ->
     }
 }
 
-val lookUpApacheClient: Lazy<HttpHandler> = lazy { ApacheClient() } // No need for proxy
+val lookUpApacheClient: Lazy<HttpHandler> = lazy { OkHttp() } // No need for proxy
 
 val lookUpArenaActivityDetails: Modifier = { record ->
     lateinit var response: Response

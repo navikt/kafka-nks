@@ -1,16 +1,11 @@
 package no.nav.kafka.dialog.kafka
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import no.nav.kafka.dialog.config_FLAG_ALT_ID
 import no.nav.kafka.dialog.config_KAFKA_CLIENT_ID
 import no.nav.kafka.dialog.env
 import no.nav.kafka.dialog.env_KAFKA_BROKERS
 import no.nav.kafka.dialog.env_KAFKA_CREDSTORE_PASSWORD
 import no.nav.kafka.dialog.env_KAFKA_KEYSTORE_PATH
-import no.nav.kafka.dialog.env_KAFKA_SCHEMA_REGISTRY
-import no.nav.kafka.dialog.env_KAFKA_SCHEMA_REGISTRY_PASSWORD
-import no.nav.kafka.dialog.env_KAFKA_SCHEMA_REGISTRY_USER
 import no.nav.kafka.dialog.env_KAFKA_TRUSTSTORE_PATH
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -45,28 +40,6 @@ val propertiesPlain get() = propertiesBase.apply {
         mapOf<String, Any>(
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
-        )
-    )
-}
-
-val propertiesAvroValueOnly get() = propertiesPlain.apply {
-    putAll(
-        mapOf<String, Any>(
-            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
-            KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to env(env_KAFKA_SCHEMA_REGISTRY),
-            KafkaAvroDeserializerConfig.USER_INFO_CONFIG to "${env(env_KAFKA_SCHEMA_REGISTRY_USER)}:${env(
-                env_KAFKA_SCHEMA_REGISTRY_PASSWORD
-            )}",
-            KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
-            KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to false
-        )
-    )
-}
-
-val propertiesAvro get() = propertiesAvroValueOnly.apply {
-    putAll(
-        mapOf<String, Any>(
-            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
         )
     )
 }
